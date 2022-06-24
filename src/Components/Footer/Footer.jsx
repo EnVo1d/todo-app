@@ -28,7 +28,7 @@ function Footer(props) {
   return (
     <footer className={styles.container}>
       <span className={styles.todoCount}>
-        <strong>{props.todos.length}</strong>
+        <strong>{props.count}</strong>
         <span> items </span>
         <span>left</span>
       </span>
@@ -64,6 +64,9 @@ function Footer(props) {
           </a>
         </li>
       </ul>
+      {
+        props.checkedCount > 0 && <button className={styles.clearCompleted} onClick={()=>props.clearCompleted()}>Clear completed</button>
+      }
     </footer>
   );
 }

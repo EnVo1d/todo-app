@@ -7,7 +7,7 @@ function Header(props) {
   function handleKeyDown(e) {
     if (e.key === "Enter") {
       if (!value) return;
-      props.createTask({id: props.todos.length, title: value, status: false});
+      props.createTask({id: props.count+1, title: value, status: false});
       setValue("");
     }
   }

@@ -7,18 +7,26 @@ import React, { useState, useEffect } from 'react';
 function App() {
   const [todos, setTodos] = useState([]);
   const [filtered, setFiltered] = useState(todos);
+  const [filterType, setFilterType] = useState('all');
+  const [counter, setCounter] = useState(0);
 
-  useEffect(() =>{
-    setFiltered(todos)
-  }, [todos])
+  useEffect(() => {
+    if (filterType === 'all') {
+      setFiltered(todos);
+    }
+    else {
+      const newTodo = [...todos].filter(item => item.status === filterType);
+      setFiltered(newTodo);
+    }
+  }, [filterType, todos])
 
   function createTask(task) {
     const newTodos = [...todos, task];
     setTodos(newTodos);
-    console.log(newTodos);
   }
 
   function editTask(index, value) {
+    console.log(value);
     const newTodos = [...todos];
     newTodos[index].title = value;
     setTodos(newTodos);
@@ -34,24 +42,46 @@ function App() {
     const newTodos = [...todos];
     newTodos[index].status = value;
     setTodos(newTodos);
+    if (value === true)
+      setCounter(counter + 1);
+    else setCounter(counter - 1);
+  }
+
+  function setStatuses(value) {
+    const newTodos = [...todos]
+    let j = 0;
+    for (let i = 0; i < newTodos.length; i++) {
+      newTodos[i].status = value;
+      j++;
+    }
+    setTodos(newTodos);
+    if (value === true)
+      setCounter(counter + j);
+    else setCounter(0)
   }
 
   function filterTodos(value) {
-    if(value==='all')
-    {
-      setFiltered(todos);
-    }
-    else{
-      let newTodo = [...todos].filter(item => item.status === value);
-      setFiltered(newTodo);
-    }
+    setFilterType(value);
+  }
+
+  function clearCompleted() {
+    const newTodos = [...todos].filter(item => item.status === false)
+    setTodos(newTodos);
+    setCounter(0);
   }
 
   return (
     <div>
-      <Header todos={todos} createTask={createTask} />
-      <Content todos={filtered} deleteTask={deleteTask} editTask={editTask} changeStatus={changeStatus}/>
-      <Footer todos={todos} filterTodos={filterTodos} />
+      <Header count={
+        todos.length > 0 ? todos[todos.length - 1].id : 0
+      } createTask={createTask} />
+      {
+        todos.length > 0 &&
+        <div>
+          <Content todos={filtered} deleteTask={deleteTask} editTask={editTask} changeStatus={changeStatus} setStatuses={setStatuses} count={todos.length - counter}/>
+          <Footer count={todos.length - counter} filterTodos={filterTodos} checkedCount={counter} clearCompleted={clearCompleted} />
+        </div>
+      }
     </div>
   );
 }
