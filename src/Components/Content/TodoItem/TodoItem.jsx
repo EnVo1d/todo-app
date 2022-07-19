@@ -1,18 +1,25 @@
 import React, { useEffect, useState, useCallback } from "react";
+import {
+  changeStatusAcitonCreator,
+  editTaskActionCreator,
+  deleteTaskActionCreator,
+} from "../../../store/reducer/todos-reducer";
+import { useDispatch } from "react-redux";
 
 function TodoItem(props) {
   const [isActive, setActive] = useState(false);
   const [value, setValue] = useState(props.todo.title);
   const [isDone, setDone] = useState(props.todo.status);
-  const [id] = useState(props.index);
+  const dispatch = useDispatch();
 
   const toggleClass = () => {
     setActive(!isActive);
   };
 
   const setComplete = () => {
+    console.log(isDone);
     setDone(!isDone);
-    props.changeStatus(props.index, !isDone);
+    dispatch(changeStatusAcitonCreator(props.index, !isDone));
     if (!isDone === false) props.toggle();
   };
 
@@ -25,9 +32,9 @@ function TodoItem(props) {
 
   const toggleOffEdit = useCallback(() => {
     if (!value) return;
-    props.editTask(id, value);
+    dispatch(editTaskActionCreator(props.todo.id, value));
     setValue(value);
-  }, [value, id, props.editTask]);
+  }, [value, props.todo.id, dispatch]);
 
   if (isDone !== props.todo.status) {
     setDone(!isDone);
@@ -60,7 +67,7 @@ function TodoItem(props) {
         <label index={props.index}>{props.todo.title}</label>
         <button
           className={props.style.destroy}
-          onClick={() => props.deleteTask(props.index)}
+          onClick={() => dispatch(deleteTaskActionCreator(props.todo.id))}
         ></button>
       </div>
       <input

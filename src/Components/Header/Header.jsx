@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 import styles from "./Header.module.css";
+import { addTaskActionCreator } from "../../store/reducer/todos-reducer";
+import { useDispatch } from "react-redux";
 
-function Header(props) {
+function Header() {
   const [value, setValue] = useState("");
+  const dispatch = useDispatch();
 
   function handleKeyDown(e) {
     if (e.key === "Enter") {
       if (!value) return;
-      props.createTask({id: props.count+1, title: value, status: false});
+      dispatch(addTaskActionCreator(value));
       setValue("");
     }
   }

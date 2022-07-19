@@ -1,30 +1,33 @@
 import React, { useState, useEffect } from "react";
 import styles from "./Content.module.css";
 import TodoItem from "./TodoItem/TodoItem";
+import { setStatusesActionCreator } from "../../store/reducer/todos-reducer";
+import { useSelector, useDispatch } from "react-redux";
 
 function Content(props) {
   const [value, setValue] = useState(false);
   const [activeElement, setActiveElement] = useState(-1);
+  const todos = useSelector((state) => state.filtered);
+  const count = useSelector((state) => state.counter);
+  const dispatch = useDispatch();
 
-  function handleClick(e){
-    const id = parseInt(e.target.attributes.getNamedItem('index').value);
-    console.log(id);
+  function handleClick(e) {
+    const id = parseInt(e.target.attributes.getNamedItem("index")?.value);
     setActiveElement(id);
   }
 
   function change() {
+    dispatch(setStatusesActionCreator(!value));
     setValue(!value);
-    props.setStatuses(!value);
   }
 
   function toggle() {
     if (value !== false) setValue(!value);
   }
 
-  useEffect(()=>{
-    if(props.count===0)
-    setValue(true);
-  }, [props.count])
+  useEffect(() => {
+    if (count === 0) setValue(true);
+  }, [count]);
 
   return (
     <section className={styles.main}>
@@ -37,16 +40,13 @@ function Content(props) {
       />
       <label htmlFor="toggle-all"></label>
       <ul className={styles.todoList}>
-        {props.todos.map((todo, index) => {
+        {todos.map((todo, index) => {
           return (
             <TodoItem
               key={todo.id}
               index={index}
               todo={todo}
-              editTask={props.editTask}
-              deleteTask={props.deleteTask}
-              changeStatus={props.changeStatus}
-              toggle={toggle}
+              toggle={toggle.bind(this)}
               style={styles}
               handleClick={handleClick.bind(this)}
               activeElement={activeElement}
